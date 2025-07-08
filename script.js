@@ -1,4 +1,3 @@
-
 // Mobile Navigation Toggle
 const navToggle = document.getElementById('navToggle');
 const navLinks = document.querySelector('.nav-links');
@@ -30,13 +29,23 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Contact Form Submission
+// Scroll to contact section function
+function scrollToContact() {
+    const contactSection = document.getElementById('contact');
+    if (contactSection) {
+        contactSection.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+    }
+}
+
+// Contact Form Submission with Web3Forms
 const contactForm = document.getElementById('contactForm');
 if (contactForm) {
-    contactForm.addEventListener('submit', function(e) {
+    contactForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         
-        // Get form data
         const formData = new FormData(this);
         const name = formData.get('name');
         const email = formData.get('email');
@@ -56,9 +65,22 @@ if (contactForm) {
             return;
         }
         
-        // Simulate form submission
-        alert('Thank you for your message! We will get back to you soon.');
-        this.reset();
+        try {
+            const response = await fetch('https://api.web3forms.com/submit', {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (response.ok) {
+                alert('Thank you for your message! We will get back to you soon.');
+                this.reset();
+            } else {
+                throw new Error('Form submission failed');
+            }
+        } catch (error) {
+            alert('There was an error sending your message. Please try again.');
+            console.error('Form submission error:', error);
+        }
     });
 }
 
